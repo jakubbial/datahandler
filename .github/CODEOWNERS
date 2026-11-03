@@ -1,0 +1,12 @@
+# Agent files
+/AGENTS.md                  @jakubbial
+
+# Workflows and repository settings files
+/.github/                   @jakubbial
+
+# Dev container configuration
+/.devcontainer/             @jakubbial
+
+# Docker and tooling configuration
+/docker-compose*.yml        @jakubbial
+**/Dockerfile*              @jakubbial
