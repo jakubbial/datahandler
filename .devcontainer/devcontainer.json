@@ -1,0 +1,41 @@
+{
+  "name": "datahandler",
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
+  "service": "backend",
+  "runServices": [
+    "backend",
+    "frontend"
+  ],
+  "workspaceFolder": "/workspaces/datahandler",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  },
+  "forwardPorts": [
+    8000,
+    5173
+  ],
+  "portsAttributes": {
+    "8000": {
+      "label": "FastAPI backend",
+      "onAutoForward": "notify"
+    },
+    "5173": {
+      "label": "Vite frontend",
+      "onAutoForward": "openBrowser"
+    }
+  }
+}

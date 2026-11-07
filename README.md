@@ -2,11 +2,22 @@
 
 DataHandler: briefly check open databases.
 
-## Running
+## Running in GitHub Codespaces
 
-Development happens only in GitHub Codespaces. When creating a codespace, choose
-the `frontend` or `backend` dev container configuration. The configurations and
-run commands will be added in a later stage.
+Development runs in a single GitHub Codespace using Docker Compose. The repository contains a shared devcontainer setup and a Compose file that starts the backend and frontend together.
+
+### Start environment
+
+```bash
+docker compose up --build
+```
+
+Then open:
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000/docs
+
+This project keeps the backend and frontend in separate application directories while sharing one Codespace and one Compose configuration.
 
 ## Conventions
 
