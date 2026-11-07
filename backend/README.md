@@ -1,20 +1,20 @@
 # Backend
 
-FastAPI (Python) application.
+FastAPI application managed with Poetry.
 
-## Run locally
+## Run with Compose
 
 ```bash
 docker compose up backend --build
 ```
 
-The app is exposed on port `8000` and the main health check is available at:
+The API is exposed on port `8000`; its health endpoint is `/health` and Swagger UI is at `/docs`.
 
-- http://localhost:8000/health
-- http://localhost:8000/docs
+## Tests
 
-## Stack
+```bash
+poetry install --with dev
+poetry run pytest
+```
 
-- Python 3.12
-- FastAPI
-- Poetry
+Python 3.12 is the supported development version.

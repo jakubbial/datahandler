@@ -1,18 +1,18 @@
 # Frontend
 
-React + TypeScript + Vite application.
+React + TypeScript + Vite application managed with npm.
 
-## Run locally
+## Run with Compose
 
 ```bash
 docker compose up frontend --build
 ```
 
-The app is exposed on port `5173`.
+The app is exposed on port `5173`. Requests to `/api` are proxied by Vite to the backend service.
 
-## Stack
+## Build
 
-- React 18
-- TypeScript
-- Vite
-- npm
+```bash
+npm install
+npm run build
+```

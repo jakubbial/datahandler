@@ -1,18 +1,16 @@
-version: "3.9"
-
 services:
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    working_dir: /app
+    working_dir: /workspaces/datahandler/backend
     command: >
       sh -c "poetry install --no-interaction --no-ansi --with dev &&
       poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/app
+      - .:/workspaces/datahandler
     environment:
       PYTHONUNBUFFERED: "1"
       PYTHONDONTWRITEBYTECODE: "1"
@@ -23,13 +21,18 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    working_dir: /app
+    working_dir: /workspaces/datahandler/frontend
     command: >
-      sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+      sh -c "npm install --no-audit --no-fund &&
+      npm run dev -- --host 0.0.0.0 --port 5173"
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app
+      - .:/workspaces/datahandler
+      - frontend_node_modules:/workspaces/datahandler/frontend/node_modules
     environment:
-      CHOKIDAR_USEPOLLING: "true"
+      VITE_API_BASE_URL: /api
     init: true
+
+volumes:
+  frontend_node_modules:

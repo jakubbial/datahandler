@@ -2,22 +2,43 @@
 
 DataHandler: briefly check open databases.
 
-## Running in GitHub Codespaces
+## Development with GitHub Codespaces
 
-Development runs in a single GitHub Codespace using Docker Compose. The repository contains a shared devcontainer setup and a Compose file that starts the backend and frontend together.
+The project uses one Codespace and Docker Compose to run the React/Vite frontend and FastAPI backend together. No database or Docker-in-Docker is required.
 
-### Start environment
+Create a Codespace from the repository and select the `datahandler` dev container. Compose starts both services automatically. The editor connects to the backend container, and the repository is mounted at `/workspaces/datahandler`.
+
+### Services and ports
+
+- Frontend: port `5173`
+- Backend API: port `8000`
+- Swagger UI: `http://localhost:8000/docs`
+- Health endpoint: `http://localhost:8000/health`
+
+The frontend calls `/api/health`; Vite proxies `/api` requests to the backend service on the Compose network. This avoids browser CORS configuration during development.
+
+### Useful commands
+
+Run in the Codespace terminal:
 
 ```bash
-docker compose up --build
+docker compose up --build        # build and start both services
+docker compose logs -f           # follow service logs
+docker compose restart backend   # restart one service
+docker compose down              # stop the services
 ```
 
-Then open:
+Compose also starts automatically when the Codespace is created. For normal work, use the forwarded Vite port; you do not need to run `docker compose up` a second time.
 
-- Frontend: http://localhost:5173
-- Backend: http://localhost:8000/docs
+### Dependency changes
 
-This project keeps the backend and frontend in separate application directories while sharing one Codespace and one Compose configuration.
+- Backend: edit `backend/pyproject.toml`; the backend startup command runs `poetry install`.
+- Frontend: edit `frontend/package.json`; the frontend startup command runs `npm install`. `node_modules` is kept in a named Compose volume.
+- Frontend API base URL: see `frontend/.env.example`; Compose sets `VITE_API_BASE_URL=/api`.
+
+## CI
+
+GitHub Actions builds the frontend and runs backend tests on pushes and pull requests.
 
 ## Conventions
 
