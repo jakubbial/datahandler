@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    working_dir: /workspaces/datahandler/backend
+    command: >
+      sh -c "poetry install --no-interaction --no-ansi --with dev &&
+      poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/workspaces/datahandler
+    environment:
+      PYTHONUNBUFFERED: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      POETRY_VIRTUALENVS_CREATE: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    init: true
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    working_dir: /workspaces/datahandler/frontend
+    command: >
+      sh -c "npm install --no-audit --no-fund &&
+      npm run dev -- --host 0.0.0.0 --port 5173"
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/workspaces/datahandler
+      - frontend_node_modules:/workspaces/datahandler/frontend/node_modules
+    environment:
+      VITE_API_BASE_URL: /api
+    depends_on:
+      backend:
+        condition: service_healthy
+    init: true
+
+volumes:
+  frontend_node_modules:
