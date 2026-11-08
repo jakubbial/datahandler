@@ -47,17 +47,58 @@ function App() {
   }, []);
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>DataHandler</h1>
-      <p>Frontend: React + TypeScript + Vite</p>
-      <h2>Backend status</h2>
-      {health ? (
-        <p role="status">{health.service}: {health.status}</p>
-      ) : error ? (
-        <p role="alert">Could not reach backend: {error}</p>
-      ) : (
-        <p>Checking backend…</p>
-      )}
+    <main className="container py-5">
+      <header className="mb-4">
+        <p className="text-primary fw-semibold text-uppercase small mb-2">DataHandler</p>
+        <h1 className="display-6 fw-bold mb-1">Panel systemu</h1>
+        <p className="text-body-secondary mb-0">
+          Przegląd stanu aplikacji i połączenia z backendem.
+        </p>
+      </header>
+
+      <section className="row g-4" aria-label="Status usług">
+        <div className="col-12 col-lg-8">
+          <article className="card border-0 shadow-sm h-100">
+            <div className="card-body p-4">
+              <div className="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <div>
+                  <h2 className="h5 card-title mb-1">Backend</h2>
+                  <p className="text-body-secondary mb-0">Status połączenia z usługą API</p>
+                </div>
+                <span
+                  className={`badge rounded-pill ${
+                    health ? 'text-bg-success' : error ? 'text-bg-danger' : 'text-bg-secondary'
+                  }`}
+                >
+                  {health ? 'Dostępny' : error ? 'Błąd' : 'Sprawdzanie'}
+                </span>
+              </div>
+
+              {health ? (
+                <p role="status" className="mb-0">
+                  <span className="fw-semibold">{health.service}</span>: {health.status}
+                </p>
+              ) : error ? (
+                <p role="alert" className="mb-0">
+                  Nie można połączyć z backendem: {error}
+                </p>
+              ) : (
+                <p role="status" className="mb-0">Sprawdzanie połączenia z backendem…</p>
+              )}
+            </div>
+          </article>
+        </div>
+
+        <div className="col-12 col-lg-4">
+          <article className="card border-0 shadow-sm h-100">
+            <div className="card-body p-4">
+              <h2 className="h5 card-title mb-2">Frontend</h2>
+              <p className="text-body-secondary mb-3">Warstwa interfejsu aplikacji</p>
+              <span className="badge text-bg-primary">React + TypeScript + Vite</span>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
   );
 }

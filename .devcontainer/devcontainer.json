@@ -1,7 +1,7 @@
 {
   "name": "datahandler",
   "dockerComposeFile": "../docker-compose.yml",
-  "service": "backend",
+  "service": "frontend",
   "runServices": [
     "backend",
     "frontend"
