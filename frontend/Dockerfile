@@ -1,4 +1,4 @@
-FROM node:20-bookworm-slim
+FROM mcr.microsoft.com/devcontainers/typescript-node:20-bookworm
 
 WORKDIR /app
 
