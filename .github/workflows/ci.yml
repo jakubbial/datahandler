@@ -26,7 +26,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install --no-audit --no-fund
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
       - run: npm run build
 
   backend:
@@ -37,12 +41,18 @@ jobs:
         working-directory: backend
     steps:
       - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install Poetry
-        run: pipx install poetry
+          cache: poetry
+          cache-dependency-path: backend/poetry.lock
       - name: Install dependencies
         run: poetry install --no-interaction --no-ansi --with dev
+      - name: Check Ruff lint
+        run: poetry run ruff check .
+      - name: Check Ruff formatting
+        run: poetry run ruff format --check .
       - name: Run tests
         run: poetry run pytest
