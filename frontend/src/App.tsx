@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 type HealthResponse = {
   status: string;
   service: string;
 };
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const healthCheckIntervalMs = 5_000;
 
 function App() {
@@ -30,7 +30,11 @@ function App() {
       } catch (requestError: unknown) {
         if (isActive) {
           setHealth(null);
-          setError(requestError instanceof Error ? requestError.message : 'Unknown error');
+          setError(
+            requestError instanceof Error
+              ? requestError.message
+              : "Unknown error",
+          );
         }
       }
     };
@@ -47,12 +51,14 @@ function App() {
   }, []);
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
+    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
       <h1>DataHandler</h1>
       <p>Frontend: React + TypeScript + Vite</p>
       <h2>Backend status</h2>
       {health ? (
-        <p role="status">{health.service}: {health.status}</p>
+        <p role="status">
+          {health.service}: {health.status}
+        </p>
       ) : error ? (
         <p role="alert">Could not reach backend: {error}</p>
       ) : (
