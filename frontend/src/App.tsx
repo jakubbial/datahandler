@@ -6,23 +6,44 @@ type HealthResponse = {
 };
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api';
+const healthCheckIntervalMs = 5_000;
 
 function App() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${apiBaseUrl}/health`)
-      .then(async (response) => {
+    let isActive = true;
+
+    const checkHealth = async () => {
+      try {
+        const response = await fetch(`${apiBaseUrl}/health`);
         if (!response.ok) {
           throw new Error(`Backend returned HTTP ${response.status}`);
         }
-        return (await response.json()) as HealthResponse;
-      })
-      .then(setHealth)
-      .catch((requestError: unknown) => {
-        setError(requestError instanceof Error ? requestError.message : 'Unknown error');
-      });
+
+        const result = (await response.json()) as HealthResponse;
+        if (isActive) {
+          setHealth(result);
+          setError(null);
+        }
+      } catch (requestError: unknown) {
+        if (isActive) {
+          setHealth(null);
+          setError(requestError instanceof Error ? requestError.message : 'Unknown error');
+        }
+      }
+    };
+
+    void checkHealth();
+    const intervalId = window.setInterval(() => {
+      void checkHealth();
+    }, healthCheckIntervalMs);
+
+    return () => {
+      isActive = false;
+      window.clearInterval(intervalId);
+    };
   }, []);
 
   return (
