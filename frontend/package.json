@@ -9,7 +9,15 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"vite.config.ts\" \"index.html\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"vite.config.ts\" \"index.html\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"vite.config.ts\" \"index.html\"",
+    "prepare": "cd .. && husky frontend/.husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint"
+    ],
+    "*.{css,html}": "prettier --write"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
@@ -25,6 +33,8 @@
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "globals": "^15.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.0.0",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.0.0",
