@@ -8,7 +8,7 @@ React + TypeScript + Vite application managed with npm.
 docker compose up frontend --build
 ```
 
-The app is exposed on port `5173`. Requests to `/api` are proxied by Vite to the backend service.
+The app is exposed on port `3100`. Requests to `/api` are proxied by Vite to the backend service.
 
 ## Build
 

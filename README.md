@@ -6,14 +6,14 @@ DataHandler: briefly check open databases.
 
 The project uses one Codespace and Docker Compose to run the React/Vite frontend and FastAPI backend together. No database or Docker-in-Docker is required.
 
-Create a Codespace from the repository and select the `datahandler` dev container. Compose starts both services automatically. The editor connects to the backend container, and the repository is mounted at `/workspaces/datahandler`.
+Create a Codespace from the repository and select the `datahandler` dev container. Compose starts both services automatically. The editor connects to the frontend container with Node.js and npm available, and the repository is mounted at `/workspaces/datahandler`.
 
 ### Services and ports
 
-- Frontend: port `5173`
-- Backend API: port `8000`
-- Swagger UI: `http://localhost:8000/docs`
-- Health endpoint: `http://localhost:8000/health`
+- Frontend: port `3100`
+- Backend API: port `8100`
+- Swagger UI: `http://localhost:8100/docs`
+- Health endpoint: `http://localhost:8100/health`
 
 The frontend calls `/api/health`; Vite proxies `/api` requests to the backend service on the Compose network. This avoids browser CORS configuration during development.
 

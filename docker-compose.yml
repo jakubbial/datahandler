@@ -6,9 +6,9 @@ services:
     working_dir: /workspaces/datahandler/backend
     command: >
       sh -c "poetry install --no-interaction --no-ansi --with dev &&
-      poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+      poetry run uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload"
     ports:
-      - "8000:8000"
+      - "8100:8100"
     volumes:
       - .:/workspaces/datahandler
     environment:
@@ -16,7 +16,7 @@ services:
       PYTHONDONTWRITEBYTECODE: "1"
       POETRY_VIRTUALENVS_CREATE: "false"
     healthcheck:
-      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()\""]
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8100/health').read()\""]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -30,9 +30,9 @@ services:
     working_dir: /workspaces/datahandler/frontend
     command: >
       sh -c "npm install --no-audit --no-fund &&
-      npm run dev -- --host 0.0.0.0 --port 5173"
+      npm run dev"
     ports:
-      - "5173:5173"
+      - "3100:3100"
     volumes:
       - .:/workspaces/datahandler
       - frontend_node_modules:/workspaces/datahandler/frontend/node_modules

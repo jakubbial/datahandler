@@ -8,7 +8,7 @@ FastAPI application managed with Poetry.
 docker compose up backend --build
 ```
 
-The API is exposed on port `8000`; its health endpoint is `/health` and Swagger UI is at `/docs`.
+The API is exposed on port `8100`; its health endpoint is `/health` and Swagger UI is at `/docs`.
 
 ## Tests
 
