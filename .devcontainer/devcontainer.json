@@ -1,7 +1,7 @@
 {
   "name": "datahandler",
   "dockerComposeFile": "../docker-compose.yml",
-  "service": "backend",
+  "service": "frontend",
   "runServices": [
     "backend",
     "frontend"
@@ -23,15 +23,15 @@
     }
   },
   "forwardPorts": [
-    8000,
-    5173
+    "backend:8100",
+    3100
   ],
   "portsAttributes": {
-    "8000": {
+    "backend:8100": {
       "label": "FastAPI backend",
       "onAutoForward": "notify"
     },
-    "5173": {
+    "3100": {
       "label": "Vite frontend",
       "onAutoForward": "openBrowser"
     }
