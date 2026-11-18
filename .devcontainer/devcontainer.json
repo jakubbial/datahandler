@@ -8,17 +8,35 @@
   ],
   "workspaceFolder": "/workspaces/datahandler",
   "shutdownAction": "stopCompose",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12",
+      "toolsToInstall": "poetry"
+    }
+  },
+  "remoteEnv": {
+    "POETRY_VIRTUALENVS_PATH": "/home/node/.cache/pypoetry/virtualenvs",
+    "POETRY_VIRTUALENVS_IN_PROJECT": "false"
+  },
+  "postCreateCommand": "cd backend && poetry install --no-interaction --with dev && mkdir -p /home/node/.venvs && ln -sfn \"$(poetry env info --path)\" /home/node/.venvs/backend",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
         "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
         "ms-azuretools.vscode-docker",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python"
+        "python.defaultInterpreterPath": "/home/node/.venvs/backend/bin/python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.cwd": "/workspaces/datahandler/backend",
+        "python.testing.pytestArgs": ["tests"],
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        }
       }
     }
   },
