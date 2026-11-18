@@ -8,6 +8,17 @@ The project uses one Codespace and Docker Compose to run the React/Vite frontend
 
 Create a Codespace from the repository and select the `datahandler` dev container. Compose starts both services automatically. The editor connects to the frontend container with Node.js and npm available, and the repository is mounted at `/workspaces/datahandler`.
 
+The editor container also has Python 3.12 and Poetry, so backend code can be edited, linted and tested without switching containers. When the Codespace is created, backend dependencies are installed in Poetry's virtual environment outside the repository. A stable link at `/home/node/.venvs/backend` lets Pylance, Ruff and the VS Code test explorer use it. The backend service has its own environment and does not share the editor's. From the editor terminal:
+
+```bash
+cd backend
+poetry run pytest
+poetry run ruff check .
+poetry run ruff format --check .
+```
+
+Uvicorn in the backend service reloads on file changes; call new endpoints at `http://backend:8100/...` from the editor terminal or through Swagger UI.
+
 ### Services and ports
 
 - Frontend: port `3100`
@@ -32,7 +43,7 @@ Compose also starts automatically when the Codespace is created. For normal work
 
 ### Dependency changes
 
-- Backend: edit `backend/pyproject.toml`; the backend startup command runs `poetry install`.
+- Backend: edit `backend/pyproject.toml`; the backend startup command runs `poetry install`. Run `cd backend && poetry install --with dev` to update the editor's Poetry environment as well.
 - Frontend: edit `frontend/package.json`; the frontend startup command runs `npm install`. `node_modules` is kept in a named Compose volume.
 - Frontend API base URL: see `frontend/.env.example`; Compose sets `VITE_API_BASE_URL=/api`.
 
