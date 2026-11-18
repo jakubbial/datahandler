@@ -15,6 +15,9 @@
 - Use Conventional Commits for commit messages and pull request titles.
 - Pull requests are squash-merged; keep the PR title suitable as the resulting commit message.
 
+## Language
+- Everything in the code must be in English: identifiers, file names, route paths, comments, user-facing UI text, log and error messages, and tests.
+
 ## Change quality
 - Make the smallest change that fully addresses the request. Avoid unrelated refactors and new dependencies unless necessary.
 - Preserve existing APIs and behavior unless the task explicitly asks to change them.
