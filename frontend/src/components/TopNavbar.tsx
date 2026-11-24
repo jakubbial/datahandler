@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 
 const navItems = [
   { to: "/", label: "Dashboard", end: true },
+  { to: "/local-data-bank", label: "Local Data Bank", end: false },
   { to: "/data", label: "Data", end: false },
   { to: "/settings", label: "Settings", end: false },
 ];
