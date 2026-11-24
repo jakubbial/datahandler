@@ -42,11 +42,11 @@
     }
   },
   "forwardPorts": [
-    "backend:8100",
+    8100,
     3100
   ],
   "portsAttributes": {
-    "backend:8100": {
+    "8100": {
       "label": "FastAPI backend",
       "onAutoForward": "notify"
     },
