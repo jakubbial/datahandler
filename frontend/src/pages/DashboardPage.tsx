@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
+import { getJson } from "../api/client";
 
 type HealthResponse = {
   status: string;
   service: string;
 };
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "/api";
 const healthCheckIntervalMs = 5_000;
 
 function DashboardPage() {
@@ -17,12 +17,7 @@ function DashboardPage() {
 
     const checkHealth = async () => {
       try {
-        const response = await fetch(`${apiBaseUrl}/health`);
-        if (!response.ok) {
-          throw new Error(`Backend returned HTTP ${response.status}`);
-        }
-
-        const result = (await response.json()) as HealthResponse;
+        const result = await getJson<HealthResponse>("/health");
         if (isActive) {
           setHealth(result);
           setError(null);
