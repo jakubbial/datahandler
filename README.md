@@ -8,14 +8,15 @@ The project uses one Codespace and Docker Compose to run the React/Vite frontend
 
 Create a Codespace from the repository and select the `datahandler` dev container. Compose starts both services automatically. The editor connects to the frontend container with Node.js and npm available, and the repository is mounted at `/workspaces/datahandler`.
 
-The editor container also has Python 3.12 and Poetry, so backend code can be edited, linted and tested without switching containers. When the Codespace is created, backend dependencies are installed in Poetry's virtual environment outside the repository. A stable link at `/home/node/.venvs/backend` lets Pylance, Ruff and the VS Code test explorer use it. The backend service has its own environment and does not share the editor's. From the editor terminal:
+The editor container also has Python 3.12 and Poetry, so backend code can be edited, linted and tested without switching containers. When the Codespace is created, backend dependencies are installed in Poetry's virtual environment outside the repository. A stable link at `/home/node/.venvs/backend` is configured as the default Python interpreter for Pylance and the VS Code test explorer. The backend service has its own environment and does not share the editor's. From the backend terminal:
 
 ```bash
-cd backend
 poetry run pytest
 poetry run ruff check .
 poetry run ruff format --check .
 ```
+
+VS Code opens two integrated terminals when the workspace opens: one in `frontend/` without the Python virtual environment, and one in `backend/` with the Poetry environment. If prompted, allow automatic tasks. These terminals open shells only; Docker Compose manages the services.
 
 Uvicorn in the backend service reloads on file changes; call new endpoints at `http://backend:8100/...` from the editor terminal or through Swagger UI.
 
@@ -49,7 +50,7 @@ Compose also starts automatically when the Codespace is created. For normal work
 
 ## CI
 
-GitHub Actions builds the frontend and runs backend tests on pushes and pull requests.
+GitHub Actions runs on pushes to `main`, `feature/**`, `bugfix/**`, `hotfix/**`, `refactor/**` and `chore/**`, and on pull requests. It checks frontend formatting, lint and production build, plus backend Ruff lint, formatting and tests.
 
 ## Conventions
 
