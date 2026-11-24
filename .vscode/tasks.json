@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "DataHandler: Frontend terminal (no Python venv)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-i"],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "focus": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "DataHandler: Backend terminal (Poetry venv)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["-i"],
+      "options": {
+        "cwd": "${workspaceFolder}/backend",
+        "env": {
+          "VIRTUAL_ENV": "/home/node/.venvs/backend",
+          "PATH": "/home/node/.venvs/backend/bin:${env:PATH}"
+        }
+      },
+      "presentation": {
+        "panel": "dedicated",
+        "focus": false
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    }
+  ]
+}
