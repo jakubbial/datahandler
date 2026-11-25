@@ -33,8 +33,11 @@ results need more than one page, select a voivodeship to narrow the request.
 For levels 6 and above, an optional county filter narrows it further. Filters
 are sent to BDL before downloading data; for level 2, the loaded voivodeships
 can also be filtered locally without another request. A dash marks missing
-values and values whose attribute is not 1; the attributes dictionary is not
-yet available.
+values and values whose attribute is not 1. Each reported value includes its
+attribute explanation (and symbol when available). Measure and last-update
+metadata are displayed above the results, including empty results. Unknown
+dictionary IDs are shown explicitly rather than guessed. The data endpoint returns
+`{ measureUnit: { id, name }, lastUpdate, units }`, not a bare units array.
 
 ## Manual development server
 

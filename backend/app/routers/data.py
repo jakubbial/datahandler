@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
 from pydantic import Field
 
-from app.data_service import DataService, UnitData
+from app.data_service import DataService, VariableData
 from app.errors import BdlNotFoundError, BdlPageLimitError
 
 router = APIRouter()
@@ -15,7 +15,7 @@ def get_data_service(request: Request) -> DataService:
     return request.app.state.data_service
 
 
-@router.get("/data/by-variable/{variable_id}", response_model=list[UnitData])
+@router.get("/data/by-variable/{variable_id}", response_model=VariableData)
 async def get_data_by_variable(
     service: Annotated[DataService, Depends(get_data_service)],
     variable_id: Annotated[int, Path(gt=0, le=2_147_483_647)],

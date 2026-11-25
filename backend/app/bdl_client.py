@@ -1,5 +1,6 @@
 import os
 import time
+from dataclasses import dataclass
 from typing import Any
 
 import httpx
@@ -29,6 +30,12 @@ def bdl_headers() -> dict[str, str]:
     return {"X-ClientId": client_id} if client_id else {}
 
 
+@dataclass
+class BdlCollection:
+    metadata: dict[str, Any]
+    results: list[dict[str, Any]]
+
+
 class BdlClient:
     def __init__(self, http: httpx.AsyncClient) -> None:
         self._http = http
@@ -41,12 +48,30 @@ class BdlClient:
         single_page: bool = False,
     ) -> list[dict[str, Any]]:
         """Fetch every page of a paginated BDL resource and return all results."""
+        collection = await self.get_all_with_metadata(
+            path, params, single_page=single_page
+        )
+        return collection.results
+
+    async def get_all_with_metadata(
+        self,
+        path: str,
+        params: dict[str, Any] | None = None,
+        *,
+        single_page: bool = False,
+    ) -> BdlCollection:
+        """Fetch all results, retaining the first page's non-results fields."""
         results: list[dict[str, Any]] = []
+        metadata: dict[str, Any] = {}
         page = 0
         while True:
             data = await self._get_json(
                 path, {**(params or {}), "page-size": PAGE_SIZE, "page": page}
             )
+            if page == 0:
+                metadata = {
+                    key: value for key, value in data.items() if key != "results"
+                }
             items = data.get("results") or []
             results.extend(items)
             total = data.get("totalRecords")
@@ -55,9 +80,9 @@ class BdlClient:
                     raise BdlUpstreamError("BDL returned an invalid record count")
                 if total > len(results):
                     raise BdlPageLimitError("BDL data exceeds one page")
-                return results
+                return BdlCollection(metadata, results)
             if not items or total is None or len(results) >= total:
-                return results
+                return BdlCollection(metadata, results)
             page += 1
 
     async def get_one(

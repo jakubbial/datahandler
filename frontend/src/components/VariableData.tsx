@@ -1,6 +1,6 @@
 import { useEffect, useId, useState } from "react";
 import { ApiError } from "../api/client";
-import { fetchVariableData, type UnitData } from "../api/data";
+import { fetchVariableData, type VariableDataResponse } from "../api/data";
 import { fetchUnits, type Unit } from "../api/units";
 import type { VariableDetails } from "../api/variables";
 
@@ -9,7 +9,7 @@ type UnitsResult =
   | { key: string; status: "error"; error: unknown };
 
 type DataResult =
-  | { key: string; status: "ready"; units: UnitData[] }
+  | { key: string; status: "ready"; data: VariableDataResponse }
   | { key: string; status: "error"; error: unknown };
 
 function errorMessage(error: unknown): string {
@@ -98,9 +98,9 @@ function VariableData({ variable }: { variable: VariableDetails }) {
       applied.parentId,
       controller.signal,
     ).then(
-      (units) => {
+      (data) => {
         if (active) {
-          setResult({ key: requestKey, status: "ready", units });
+          setResult({ key: requestKey, status: "ready", data });
         }
       },
       (error: unknown) => {
@@ -133,7 +133,7 @@ function VariableData({ variable }: { variable: VariableDetails }) {
       (filterCounty && !county));
   const allUnits =
     currentResult?.status === "ready"
-      ? [...currentResult.units].sort((a, b) =>
+      ? [...currentResult.data.units].sort((a, b) =>
           a.unitId < b.unitId ? -1 : a.unitId > b.unitId ? 1 : 0,
         )
       : [];
@@ -386,6 +386,14 @@ function VariableData({ variable }: { variable: VariableDetails }) {
               )}
             </div>
           )}
+          {currentResult?.status === "ready" && (
+            <p className="small text-body-secondary">
+              Measure:{" "}
+              {currentResult.data.measureUnit.name ??
+                `Unknown measure (${currentResult.data.measureUnit.id})`}
+              . Last update: {currentResult.data.lastUpdate ?? "Not provided"}.
+            </p>
+          )}
           {currentResult?.status === "ready" &&
             (units.length === 0 ? (
               <p role="status" className="text-body-secondary">
@@ -395,7 +403,7 @@ function VariableData({ variable }: { variable: VariableDetails }) {
               <>
                 <p className="small text-body-secondary">
                   — indicates a missing value or a value with a non-normal
-                  attribute.
+                  attribute. Read the attribute explanation below each value.
                 </p>
                 <div className="table-responsive">
                   <table className="table table-striped">
@@ -425,6 +433,16 @@ function VariableData({ variable }: { variable: VariableDetails }) {
                                 value.value !== null
                                   ? value.value
                                   : "—"}
+                                {value && (
+                                  <small className="d-block text-body-secondary">
+                                    Attribute {value.attributeId}:{" "}
+                                    {value.attributeDescription ||
+                                      value.attributeName ||
+                                      "Unknown attribute"}
+                                    {value.attributeSymbol?.trim() &&
+                                      ` (${value.attributeSymbol})`}
+                                  </small>
+                                )}
                               </td>
                             );
                           })}

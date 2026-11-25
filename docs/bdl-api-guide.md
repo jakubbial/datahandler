@@ -290,11 +290,32 @@ The full list is at `/attributes`. The ones that change how you read a number:
 | 7 | Value smaller than the display precision (not a real zero) |
 | 9 | Preliminary estimate |
 | 11 | Methodology changed |
+| 13 | Methodology changed; total may be incomplete |
+| 14 | Methodology changed; no data or confidential |
 | 15 | No data because units or variables changed |
+| 17 | Methodology changed; value smaller than the display precision |
+| 20, 21 | Low-precision data |
 | 50 | Not available yet, will be published |
+| 91 | No data, or confidential (same description as 4) |
 | 94 | Meaningful zero (for example births equal deaths) |
+| 97 | County and city with county rights combined |
+| 98 | Methodology changed; meaningful zero |
 
 **`val: 0` does not always mean zero.** Always check `attrId`.
+
+The `/attributes` dictionary has `id`, `name`, `symbol`, and `description`.
+Names are often just `"0"` or `"wartość"` (value): use the description and symbol,
+not the name alone, to interpret the flag. Empty descriptions and a single-space
+symbol are valid. `/measures` has `id`, `name`, and `description`. Both dictionaries
+are paginated. A single page of each, checked on 2026-11-25, contained all 18
+attributes and 76 measures respectively.
+
+The DataHandler backend exposes cached `/attributes` and `/measures` endpoints.
+Its `/data/by-variable/{id}` response is an object containing `measureUnit`
+(`id`, `name`), nullable `lastUpdate`, and `units`. Each value includes
+`attributeId`, `attributeName`, `attributeDescription`, and `attributeSymbol`.
+This is the backend's normalized contract, not the upstream BDL response shape.
+See [the backend README](../backend/README.md#bdl-dictionaries-and-data-metadata).
 
 ### Aggregates (`aggregate-id`)
 
