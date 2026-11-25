@@ -1,3 +1,4 @@
+import asyncio
 import time
 from typing import Any
 
@@ -39,6 +40,7 @@ class DataService:
         self._ttl = ttl_seconds
         self._max_entries = max_entries
         self._cache: dict[CacheKey, tuple[float, list[UnitData]]] = {}
+        self._inflight: dict[CacheKey, asyncio.Task[list[UnitData]]] = {}
 
     async def get_data_by_variable(
         self,
@@ -54,9 +56,28 @@ class DataService:
         if cached is not None and cached[0] > time.monotonic():
             log_cache("data", "hit", key)
             return cached[1]
-        log_cache("data", "expired" if cached is not None else "miss", key)
 
-        params: dict[str, Any] = {"year": unique_years}
+        inflight = self._inflight.get(key)
+        if inflight is not None:
+            log_cache("data", "shared", key)
+        else:
+            log_cache("data", "expired" if cached is not None else "miss", key)
+            inflight = asyncio.create_task(self._fetch(key, unique_years))
+            self._inflight[key] = inflight
+            inflight.add_done_callback(lambda task: self._finish(key, task))
+
+        # Shielded so a cancelled caller does not abort the fetch shared by others.
+        return await asyncio.shield(inflight)
+
+    def _finish(self, key: CacheKey, task: asyncio.Task[list[UnitData]]) -> None:
+        if self._inflight.get(key) is task:
+            del self._inflight[key]
+        if not task.cancelled():
+            task.exception()  # Mark as retrieved when every caller was cancelled.
+
+    async def _fetch(self, key: CacheKey, years: list[int]) -> list[UnitData]:
+        variable_id, _, unit_level, unit_parent_id = key
+        params: dict[str, Any] = {"year": years}
         if unit_level is not None:
             params["unit-level"] = unit_level
         if unit_parent_id:
