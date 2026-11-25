@@ -10,11 +10,14 @@ export function fetchVariableData(
   variableId: number,
   years: number[],
   unitLevel: number,
+  unitParentId: string | null,
   signal?: AbortSignal,
 ): Promise<UnitData[]> {
   const query = new URLSearchParams();
   years.forEach((year) => query.append("year", String(year)));
   query.set("unit_level", String(unitLevel));
+  if (unitParentId) query.set("unit_parent_id", unitParentId);
+  else query.set("single_page", "true");
   return getJson<UnitData[]>(`/data/by-variable/${variableId}?${query}`, {
     signal,
   });
