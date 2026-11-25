@@ -2,6 +2,8 @@
 
 DataHandler: briefly check open databases.
 
+New to the BDL API? Start with the [BDL API step-by-step guide](docs/bdl-api-guide.md).
+
 ## Development with GitHub Codespaces
 
 The project uses one Codespace and Docker Compose to run the React/Vite frontend and FastAPI backend together. No database or Docker-in-Docker is required.
