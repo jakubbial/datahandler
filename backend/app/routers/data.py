@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
 from pydantic import Field
 
 from app.data_service import DataService, UnitData
-from app.errors import BdlNotFoundError
+from app.errors import BdlNotFoundError, BdlPageLimitError
 
 router = APIRouter()
 
@@ -27,10 +27,16 @@ async def get_data_by_variable(
     unit_parent_id: Annotated[
         str | None, Query(max_length=20, pattern=r"^[A-Za-z0-9]+$")
     ] = None,
+    single_page: bool = False,
 ):
     try:
         return await service.get_data_by_variable(
-            variable_id, year, unit_level, unit_parent_id
+            variable_id, year, unit_level, unit_parent_id, single_page
         )
     except BdlNotFoundError:
         raise HTTPException(status_code=404, detail="Variable not found")
+    except BdlPageLimitError:
+        raise HTTPException(
+            status_code=409,
+            detail="Data exceeds one page. Select a voivodeship to narrow the request.",
+        )

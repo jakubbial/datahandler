@@ -10,7 +10,7 @@ from app.monitoring import log_cache
 CACHE_TTL_SECONDS = 60 * 60
 CACHE_MAX_ENTRIES = 500
 
-CacheKey = tuple[int, tuple[int, ...], int | None, str | None]
+CacheKey = tuple[int, tuple[int, ...], int | None, str | None, bool]
 
 
 class DataValue(BaseModel):
@@ -48,9 +48,16 @@ class DataService:
         years: list[int],
         unit_level: int | None = None,
         unit_parent_id: str | None = None,
+        single_page: bool = False,
     ) -> list[UnitData]:
         unique_years = sorted(set(years))
-        key: CacheKey = (variable_id, tuple(unique_years), unit_level, unit_parent_id)
+        key: CacheKey = (
+            variable_id,
+            tuple(unique_years),
+            unit_level,
+            unit_parent_id,
+            single_page,
+        )
 
         cached = self._cache.get(key)
         if cached is not None and cached[0] > time.monotonic():
@@ -76,7 +83,7 @@ class DataService:
             task.exception()  # Mark as retrieved when every caller was cancelled.
 
     async def _fetch(self, key: CacheKey, years: list[int]) -> list[UnitData]:
-        variable_id, _, unit_level, unit_parent_id = key
+        variable_id, _, unit_level, unit_parent_id, single_page = key
         params: dict[str, Any] = {"year": years}
         if unit_level is not None:
             params["unit-level"] = unit_level
@@ -84,7 +91,7 @@ class DataService:
             params["unit-parent-id"] = unit_parent_id
 
         raw_items = await self._client.get_all(
-            f"/data/by-variable/{variable_id}", params
+            f"/data/by-variable/{variable_id}", params, single_page=single_page
         )
         data = [self._simplify(item) for item in raw_items]
 
