@@ -9,6 +9,8 @@ from app.routers.variables import router as variables_router
 from app.variables_service import VariablesService
 from app.data_service import DataService
 from app.routers.data import router as data_router
+from app.routers.units import router as units_router
+from app.units_service import UnitsService
 
 from app.bdl_client import BDL_BASE_URL, BDL_TIMEOUT_SECONDS, BdlClient, bdl_headers
 from app.errors import BdlRateLimitError, BdlUpstreamError
@@ -28,6 +30,7 @@ async def lifespan(app: FastAPI):
         app.state.subjects_service = SubjectsService(bdl_client)
         app.state.variables_service = VariablesService(bdl_client)
         app.state.data_service = DataService(bdl_client)
+        app.state.units_service = UnitsService(bdl_client)
 
         yield
 
@@ -36,6 +39,7 @@ app = FastAPI(title="DataHandler API", lifespan=lifespan)
 app.include_router(subjects_router)
 app.include_router(variables_router)
 app.include_router(data_router)
+app.include_router(units_router)
 
 
 @app.exception_handler(BdlRateLimitError)

@@ -4,7 +4,12 @@ from typing import Any
 
 import httpx
 
-from app.errors import BdlRateLimitError, BdlUpstreamError, BdlNotFoundError
+from app.errors import (
+    BdlNotFoundError,
+    BdlPageLimitError,
+    BdlRateLimitError,
+    BdlUpstreamError,
+)
 from app.monitoring import logger
 
 BDL_BASE_URL = "https://bdl.stat.gov.pl/api/v1"
@@ -29,7 +34,11 @@ class BdlClient:
         self._http = http
 
     async def get_all(
-        self, path: str, params: dict[str, Any] | None = None
+        self,
+        path: str,
+        params: dict[str, Any] | None = None,
+        *,
+        single_page: bool = False,
     ) -> list[dict[str, Any]]:
         """Fetch every page of a paginated BDL resource and return all results."""
         results: list[dict[str, Any]] = []
@@ -41,6 +50,12 @@ class BdlClient:
             items = data.get("results") or []
             results.extend(items)
             total = data.get("totalRecords")
+            if single_page:
+                if not isinstance(total, int) or isinstance(total, bool) or total < 0:
+                    raise BdlUpstreamError("BDL returned an invalid record count")
+                if total > len(results):
+                    raise BdlPageLimitError("BDL data exceeds one page")
+                return results
             if not items or total is None or len(results) >= total:
                 return results
             page += 1

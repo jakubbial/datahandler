@@ -37,6 +37,15 @@ Entries go to stderr and to `backend/logs/bdl-monitoring.log` (rotated at 5 MB, 
 ignored by git). Set `BDL_MONITORING_LOG_FILE` to change the path, or to an empty value to
 disable the file.
 
+## Territorial units
+
+`GET /units?level=2` lists voivodeships. `GET /units?level=5&parent_id=...`
+lists counties within a voivodeship. Results are cached for 24 hours. The
+`unit_parent_id` parameter of `GET /data/by-variable/{variable_id}` limits
+the upstream data request to descendants of that unit.
+Set `single_page=true` to limit a data request to one BDL page. If more data is
+available, the endpoint responds with HTTP 409 instead of returning partial data.
+
 ## Tests
 
 ```bash

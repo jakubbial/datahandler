@@ -12,3 +12,7 @@ class BdlUpstreamError(BdlError):
 
 class BdlNotFoundError(BdlError):
     """BDL reported that the requested resource does not exist (HTTP 404)."""
+
+
+class BdlPageLimitError(BdlError):
+    """The requested data exceeds the allowed number of BDL pages."""
