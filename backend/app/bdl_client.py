@@ -1,3 +1,4 @@
+import os
 import time
 from typing import Any
 
@@ -9,11 +10,18 @@ from app.monitoring import logger
 BDL_BASE_URL = "https://bdl.stat.gov.pl/api/v1"
 BDL_TIMEOUT_SECONDS = 10.0
 PAGE_SIZE = 100
+CLIENT_ID_ENV_VAR = "BDL_CLIENT_ID"
 
 _BASE_PARAMS: dict[str, Any] = {
     "lang": "pl",
     "format": "json",
 }
+
+
+def bdl_headers() -> dict[str, str]:
+    """Return the BDL API key header, or no headers for anonymous access."""
+    client_id = os.environ.get(CLIENT_ID_ENV_VAR, "").strip()
+    return {"X-ClientId": client_id} if client_id else {}
 
 
 class BdlClient:
