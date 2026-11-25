@@ -36,6 +36,8 @@ jobs:
   backend:
     name: Backend tests
     runs-on: ubuntu-latest
+    env:
+      BDL_CLIENT_ID: ${{ secrets.BDL_CLIENT_ID }}
     defaults:
       run:
         working-directory: backend
