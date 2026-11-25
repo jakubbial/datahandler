@@ -4,6 +4,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.bdl_client import BdlClient
+from app.monitoring import log_cache
 
 CACHE_TTL_SECONDS = 60 * 60
 CACHE_MAX_ENTRIES = 500
@@ -51,7 +52,9 @@ class DataService:
 
         cached = self._cache.get(key)
         if cached is not None and cached[0] > time.monotonic():
+            log_cache("data", "hit", key)
             return cached[1]
+        log_cache("data", "expired" if cached is not None else "miss", key)
 
         params: dict[str, Any] = {"year": unique_years}
         if unit_level is not None:

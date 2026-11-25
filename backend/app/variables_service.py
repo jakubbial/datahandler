@@ -4,6 +4,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.bdl_client import BdlClient
+from app.monitoring import log_cache
 
 CACHE_TTL_SECONDS = 24 * 60 * 60
 NAME_SEPARATOR = " - "
@@ -40,7 +41,9 @@ class VariablesService:
     async def get_variables(self, subject_id: str) -> list[Variable]:
         cached = self._cache.get(subject_id)
         if cached is not None and cached[0] > time.monotonic():
+            log_cache("variables", "hit", subject_id)
             return cached[1]
+        log_cache("variables", "expired" if cached is not None else "miss", subject_id)
 
         raw_items = await self._client.get_all(
             "/variables", {"subject-id": subject_id, "sort": "Id"}
@@ -52,7 +55,13 @@ class VariablesService:
     async def get_variable(self, variable_id: int) -> VariableDetails:
         cached = self._details_cache.get(variable_id)
         if cached is not None and cached[0] > time.monotonic():
+            log_cache("variable_details", "hit", variable_id)
             return cached[1]
+        log_cache(
+            "variable_details",
+            "expired" if cached is not None else "miss",
+            variable_id,
+        )
 
         item = await self._client.get_one(f"/variables/{variable_id}")
         details = self._simplify_details(item)
