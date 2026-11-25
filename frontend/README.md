@@ -27,10 +27,14 @@ Selecting a subject with variables loads its variables from `GET /variables`
 name before the first ` - ` and can be filtered by name. The selected variable
 is kept in the `variable` query parameter, for example
 `/local-data-bank/K15-ceny/G186-ceny-w-rolnictwie/P3183-...?variable=288616`.
-The selected variable's territorial data is loaded using its unit level and
-latest available year. Select additional available years (up to 30) to compare
-them. A dash marks missing values and values whose attribute is not 1; the
-attributes dictionary is not yet available.
+For territorial data, select years (up to 30) and press Load data. By default,
+the request covers all voivodeships and is limited to one BDL page. If the
+results need more than one page, select a voivodeship to narrow the request.
+For levels 6 and above, an optional county filter narrows it further. Filters
+are sent to BDL before downloading data; for level 2, the loaded voivodeships
+can also be filtered locally without another request. A dash marks missing
+values and values whose attribute is not 1; the attributes dictionary is not
+yet available.
 
 ## Manual development server
 
