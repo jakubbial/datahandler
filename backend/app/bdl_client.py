@@ -1,8 +1,10 @@
+import time
 from typing import Any
 
 import httpx
 
 from app.errors import BdlRateLimitError, BdlUpstreamError, BdlNotFoundError
+from app.monitoring import logger
 
 BDL_BASE_URL = "https://bdl.stat.gov.pl/api/v1"
 BDL_TIMEOUT_SECONDS = 10.0
@@ -42,10 +44,24 @@ class BdlClient:
         return await self._get_json(path, params or {})
 
     async def _get_json(self, path: str, params: dict[str, Any]) -> dict[str, Any]:
+        started = time.perf_counter()
         try:
             response = await self._http.get(path, params={**_BASE_PARAMS, **params})
         except httpx.HTTPError as exc:  # includes timeouts and network errors
+            logger.info(
+                "bdl_request path=%s params=%s status=error duration_ms=%.0f",
+                path,
+                params,
+                (time.perf_counter() - started) * 1000,
+            )
             raise BdlUpstreamError("BDL request failed") from exc
+        logger.info(
+            "bdl_request path=%s params=%s status=%s duration_ms=%.0f",
+            path,
+            params,
+            response.status_code,
+            (time.perf_counter() - started) * 1000,
+        )
 
         if response.status_code == 404:
             raise BdlNotFoundError("BDL resource not found")

@@ -12,10 +12,12 @@ from app.routers.data import router as data_router
 
 from app.bdl_client import BDL_BASE_URL, BDL_TIMEOUT_SECONDS, BdlClient
 from app.errors import BdlRateLimitError, BdlUpstreamError
+from app.monitoring import configure_monitoring
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    configure_monitoring()
     async with httpx.AsyncClient(
         base_url=BDL_BASE_URL, timeout=BDL_TIMEOUT_SECONDS
     ) as http:

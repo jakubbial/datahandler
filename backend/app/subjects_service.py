@@ -4,6 +4,7 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.bdl_client import BdlClient
+from app.monitoring import log_cache
 
 CACHE_TTL_SECONDS = 24 * 60 * 60
 
@@ -27,7 +28,9 @@ class SubjectsService:
     async def get_subjects(self, parent_id: str | None = None) -> list[Subject]:
         cached = self._cache.get(parent_id)
         if cached is not None and cached[0] > time.monotonic():
+            log_cache("subjects", "hit", parent_id)
             return cached[1]
+        log_cache("subjects", "expired" if cached is not None else "miss", parent_id)
 
         params: dict[str, Any] = {"sort": "Name"}
         if parent_id:
